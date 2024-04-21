@@ -122,7 +122,7 @@ class DiecastDataForm(tk.Frame):
         add_button.grid(row=4, column=0)
 
         # View Diecast Button
-        view_button = tk.Button(buttons_frame, text="   View Diecasts   ", command=self.view_diecasts)
+        view_button = tk.Button(buttons_frame, text="   View Diecasts   ", command=self.read_data)
         view_button.grid(row=4, column=1)
 
         # Universal Padding for Buttons
@@ -172,8 +172,9 @@ class DiecastDataForm(tk.Frame):
     def read_data(self):
         self.diecasts = []
         self.current_diecast=0
+        file="diecast_information.csv"
         try:
-            with open(FILENAME, newline="") as file:
+            with open(file, mode='r', newline="") as file:
                 reader = csv.reader(file)
                 for row in reader:
                     self.diecasts.append(row)
@@ -186,63 +187,80 @@ class DiecastDataForm(tk.Frame):
         if self.diecasts:
             diecast = self.diecasts[self.current_diecast]
 
-        window = tk.Toplevel(self)
-        window.title("Diecasts")
-        window.geometry("500x350")
+            window = tk.Toplevel(self)
+            window.title("Diecasts")
+            window.geometry("500x350")
+            
+            self.topLevel = window
+            
+            # Window Icon Photo
+            icon = tk.PhotoImage(file="nascar_icon.png")
+            window.iconphoto(False, icon)
+            
+            # Background image for popup window
+            bg2 = tk.PhotoImage(file="harvick_michigan_burnout.png")
+            label2 = tk.Label(window, image=bg2)
+            label2.image = bg2  # Keeping reference to avoid back caching
+            label2.place(x=0, y=0)
+
+            pop_up_frame = tk.LabelFrame(window, pady=10)
+            pop_up_frame.pack()
+            
+            ttk.Label(pop_up_frame, text="First Name:").grid(row=0, column=0, sticky=tk.W)
+            ttk.Label(pop_up_frame, text=diecast[0], state="readonly").grid(row=0, column=1)
+
+            ttk.Label(pop_up_frame, text="Last Name:").grid(row=1, column=0, sticky=tk.W)
+            ttk.Label(pop_up_frame, text=diecast[1], state="readonly").grid(row=1, column=1)
+
+            ttk.Label(pop_up_frame, text="Team Name:").grid(row=2, column=0, sticky=tk.W)
+            ttk.Label(pop_up_frame, text=diecast[2], state="readonly").grid(row=2, column=1)
+
+            ttk.Label(pop_up_frame, text="Car Year:").grid(row=3, column=0, sticky=tk.W)
+            ttk.Label(pop_up_frame, text=diecast[3], state="readonly").grid(row=3, column=1)
+
+            ttk.Label(pop_up_frame, text="Car Make:").grid(row=4, column=0, sticky=tk.W)
+            ttk.Label(pop_up_frame, text=diecast[4], state="readonly").grid(row=4, column=1)
+
+            ttk.Label(pop_up_frame, text="Car Model:").grid(row=5, column=0, sticky=tk.W)
+            ttk.Label(pop_up_frame, text=diecast[5], state="readonly").grid(row=5, column=1)
+
+            ttk.Label(pop_up_frame, text="Car Number:").grid(row=6, column=0, sticky=tk.W)
+            ttk.Label(pop_up_frame, text=diecast[6], state="readonly").grid(row=6, column=1)
+            
+            ttk.Label(pop_up_frame, text="Car Sponsor:").grid(row=7, column=0, sticky=tk.W)
+            ttk.Label(pop_up_frame, text=diecast[7], state="readonly").grid(row=7, column=1)
+            
+            ttk.Label(pop_up_frame, text="Raced Diecast:").grid(row=8, column=0, sticky=tk.W)
+            ttk.Label(pop_up_frame, text=diecast[8], state="readonly").grid(row=8, column=1)
+            
+            ttk.Label(pop_up_frame, text="Racetrack:").grid(row=9, column=0, sticky=tk.W)
+            ttk.Label(pop_up_frame, text=diecast[9], state="readonly").grid(row=9, column=1)
+            
+            ttk.Label(pop_up_frame, text="Was it a win?").grid(row=10, column=0, sticky=tk.W)
+            ttk.Label(pop_up_frame, text=diecast[10], state="readonly").grid(row=10, column=1)
+
+            ttk.Button(pop_up_frame, text="Next", command=self.load_next).grid(row=11, column=1, pady=10)
+            ttk.Button(pop_up_frame, text="Back", command=self.load_previous).grid(row=11, column=0, pady=10)
+        else:
+            messagebox.showinfo("No entries", "There are no entries to display")
         
-        # Window Icon Photo
-        icon = tk.PhotoImage(file="nascar_icon.png")
-        self.master.iconphoto(False, icon)
-        
-        # Background image for popup window
-        bg2 = tk.PhotoImage(file="harvick_michigan_burnout.png")
-        label1 = tk.Label(self, image=bg2)
-        label1.image = bg2  # Keeping reference to avoid back caching
-        label1.place(x=0, y=0)
-
-        
-        ttk.Label(window, text="First Name:").grid(row=0, column=0, sticky=tk.W)
-        ttk.Label(window, text=diecast[0], state="readonly").grid(row=0, column=1)
-
-        ttk.Label(window, text="Last Name:").grid(row=1, column=0, sticky=tk.W)
-        ttk.Label(window, text=diecast[1], state="readonly").grid(row=1, column=1)
-
-        ttk.Label(window, text="Team Name:").grid(row=2, column=0, sticky=tk.W)
-        ttk.Label(window, text=diecast[2], state="readonly").grid(row=2, column=1)
-
-        ttk.Label(window, text="Car Year:").grid(row=3, column=0, sticky=tk.W)
-        ttk.Label(window, text=diecast[3], state="readonly").grid(row=3, column=1)
-
-        ttk.Label(window, text="Car Make:").grid(row=4, column=0, sticky=tk.W)
-        ttk.Label(window, text=diecast[4], state="readonly").grid(row=4, column=1)
-
-        ttk.Label(window, text="Car Model:").grid(row=5, column=0, sticky=tk.W)
-        ttk.Label(window, text=diecast[5], state="readonly").grid(row=5, column=1)
-
-        ttk.Label(window, text="Car Number:").grid(row=6, column=0, sticky=tk.W)
-        ttk.Label(window, text=diecast[6], state="readonly").grid(row=6, column=1)
-        
-        ttk.Label(window, text="Car Sponsor:").grid(row=7, column=0, sticky=tk.W)
-        ttk.Label(window, text=diecast[7], state="readonly").grid(row=7, column=1)
-        
-        ttk.Label(window, text="Raced Diecast:").grid(row=8, column=0, sticky=tk.W)
-        ttk.Label(window, text=diecast[8], state="readonly").grid(row=8, column=1)
-        
-        ttk.Label(window, text="Racetrack:").grid(row=9, column=0, sticky=tk.W)
-        ttk.Label(window, text=diecast[9], state="readonly").grid(row=9, column=1)
-        
-        ttk.Label(window, text="Was it a win?:").grid(row=10, column=0, sticky=tk.W)
-        ttk.Label(window, text=diecast[10], state="readonly").grid(row=10, column=1)
-        
-
-        ttk.Button(window, text="Next", command=self.load_next).grid(row=7, column=0, pady=10)
-        ttk.Button(window, text="Back", command=self.load_previous).grid(row=7, column=1, pady=10)
-
     def load_next(self):
-        pass
+        if self.current_diecast < len(self.diecasts) - 1:
+            self.current_diecast += 1
+            if self.topLevel:
+                self.topLevel.destroy()
+            self.view_diecasts(self.diecasts[self.current_diecast])
+        else:
+            messagebox.showinfo("End of Data", "No more diecasts to display.")
 
     def load_previous(self):
-        pass
+        if self.current_diecast > 0:
+            self.current_diecast -= 1
+            if self.topLevel:
+                self.topLevel.destroy()
+            self.view_diecasts(self.diecasts[self.current_diecast])
+        else:
+            messagebox.showinfo("Beginning of Data", "Already at the first diecast.")
 
 if __name__ == "__main__":
     root = tk.Tk()
